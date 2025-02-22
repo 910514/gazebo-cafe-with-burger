@@ -1,5 +1,5 @@
 # Gazebo Cafe with TurtleBot3 Burger (ROS 2 Humble)
-
+![Cafe_with_Burger](https://github.com/910514/gazebo-cafe-with-burger/blob/main/images/demo.png)
 This repository, `gazebo-cafe-with-burger`, provides a custom Gazebo environment featuring a cafe world (`cafe.world`) designed for use with the TurtleBot3 Burger robot in ROS 2 Humble (Ubuntu 22.04). It includes launch files to spawn the TurtleBot3 in the cafe environment and explore it within Gazebo.
 
 ## Prerequisites
