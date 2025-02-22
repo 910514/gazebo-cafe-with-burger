@@ -16,7 +16,7 @@ This repository, `gazebo-cafe-with-burger`, provides a custom Gazebo environment
    ```bash
    mkdir -p ~/ros2_ws/src
    cd ~/ros2_ws/src
-   git clone https://github.com/<your-username>/gazebo-cafe-with-burger.git
+   git clone https://github.com/910514/gazebo-cafe-with-burger.git
    mv ~/ros2_ws/src/gazebo-cafe-with-burger/cafe_env ~/ros2_ws/src/
    rm -dr ~/ros2_ws/src/gazebo-cafe-with-burger
    ```
