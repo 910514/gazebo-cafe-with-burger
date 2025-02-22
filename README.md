@@ -18,7 +18,7 @@ This repository, `gazebo-cafe-with-burger`, provides a custom Gazebo environment
    cd ~/ros2_ws/src
    git clone https://github.com/910514/gazebo-cafe-with-burger.git
    mv ~/ros2_ws/src/gazebo-cafe-with-burger/cafe_env ~/ros2_ws/src/
-   rm -dr ~/ros2_ws/src/gazebo-cafe-with-burger
+   sudo rm -dr ~/ros2_ws/src/gazebo-cafe-with-burger
    ```
 
 2. **Build the Workspace**:
@@ -27,6 +27,12 @@ This repository, `gazebo-cafe-with-burger`, provides a custom Gazebo environment
    cd ~/ros2_ws
    colcon build
    source install/setup.bash
+   mkdir ~/ros2_ws/src/install/cafe_env/share/cafe_env/worlds
+   mkdir ~/ros2_ws/src/install/cafe_env/share/cafe_env/launch
+   cp ~/ros2_ws/src/cafe_env/worlds/cafe.world ~/ros2_ws/src/install/cafe_env/share/cafe_env/worlds
+   cp ~/ros2_ws/src/cafe_env/launch/robot_state_publisher.launch.py ~/ros2_ws/src/install/cafe_env/share/cafe_env/launch
+   cp ~/ros2_ws/src/cafe_env/launch/spawn_turtlebot3.launch.py  ~/ros2_ws/src/install/cafe_env/share/cafe_env/launch
+   cp ~/ros2_ws/src/cafe_env/launch/cafe_env.launch.py ~/ros2_ws/src/install/cafe_env/share/cafe_env
    ```
 
 3. **Set TurtleBot3 Model**:
