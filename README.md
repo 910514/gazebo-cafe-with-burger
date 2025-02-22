@@ -17,6 +17,8 @@ This repository, `gazebo-cafe-with-burger`, provides a custom Gazebo environment
    mkdir -p ~/ros2_ws/src
    cd ~/ros2_ws/src
    git clone https://github.com/<your-username>/gazebo-cafe-with-burger.git
+   mv ~/ros2_ws/src/gazebo-cafe-with-burger/cafe_env ~/ros2_ws/src/
+   rm -dr ~/ros2_ws/src/gazebo-cafe-with-burger
    ```
 
 2. **Build the Workspace**:
@@ -60,22 +62,8 @@ gazebo-cafe-with-burger/
 
 ### Launching the Cafe Environment with TurtleBot3
 
-1. **Launch Gazebo with the Cafe World**:
-   Use the `cafe_env.launch.py` file to start Gazebo with the custom `cafe.world`:
    ```bash
-   ros2 launch gazebo-cafe-with-burger cafe_env.launch.py
-   ```
-
-2. **Spawn the TurtleBot3 Burger**:
-   Spawn the TurtleBot3 Burger in the cafe environment:
-   ```bash
-   ros2 launch gazebo-cafe-with-burger spawn_turtlebot3.launch.py
-   ```
-
-3. **Publish Robot State** (Optional):
-   To enable visualization or navigation, publish the robot’s state:
-   ```bash
-   ros2 launch gazebo-cafe-with-burger robot_state_publisher.launch.py
+   ros2 launch cafe_env cafe_env.launch.py
    ```
 
 ## Building and Running
@@ -83,7 +71,7 @@ gazebo-cafe-with-burger/
 1. After editing files, rebuild:
    ```bash
    cd ~/ros2_ws
-   colcon build --packages-select gazebo-cafe-with-burger
+   colcon build --packages-select cafe_env
    source install/setup.bash
    ```
 2. Run the launch files as shown above.
