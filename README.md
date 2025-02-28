@@ -25,16 +25,8 @@ This repository, `gazebo-cafe-with-burger`, provides a custom Gazebo environment
    Build the workspace using `colcon`:
    ```bash
    cd ~/ros2_ws
-   colcon build
+   colcon build --symlink-install
    source install/setup.bash
-   rm ~/ros2_ws/install/cafe_env/share/cafe_env/worlds
-   rm ~/ros2_ws/install/cafe_env/share/cafe_env/launch
-   mkdir ~/ros2_ws/install/cafe_env/share/cafe_env/worlds
-   mkdir ~/ros2_ws/install/cafe_env/share/cafe_env/launch
-   cp ~/ros2_ws/src/cafe_env/worlds/cafe.world ~/ros2_ws/install/cafe_env/share/cafe_env/worlds
-   cp ~/ros2_ws/src/cafe_env/launch/robot_state_publisher.launch.py ~/ros2_ws/install/cafe_env/share/cafe_env/launch
-   cp ~/ros2_ws/src/cafe_env/launch/spawn_turtlebot3.launch.py  ~/ros2_ws/install/cafe_env/share/cafe_env/launch
-   cp ~/ros2_ws/src/cafe_env/launch/cafe_env.launch.py ~/ros2_ws/install/cafe_env/share/cafe_env
    cd ~/Downloads
    git clone https://github.com/osrf/gazebo_models.git
    cp -dr ~/Downloads/gazebo_models/cafe ~/.gazebo/models
