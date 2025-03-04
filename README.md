@@ -17,7 +17,7 @@ This repository, `gazebo-cafe-with-burger`, provides a custom Gazebo environment
 2. **Update SDF Paths for Your System**:
    - The SDF uses absolute paths specific to the original developer’s system (`/home/josh`). Run this command to replace them with your home directory:
      ```bash
-     sed -i "s|/home/josh|$HOME|g" ~/ros2_ws/src/cafe_env/models/turtlebot3_burger/model.sdf
+     sed -i -e "s|/home/josh|$HOME|g" -e "s|dev_ws|ros2_ws|g" ~/ros2_ws/src/cafe_env/models/turtlebot3_burger/model.sdf
      ```
 
 3. **Build the Workspace & Setup required models**:
