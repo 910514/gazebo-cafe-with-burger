@@ -350,7 +350,7 @@
         <always_on>true</always_on>
         <update_rate>30</update_rate>
         <camera>
-          <horizontal_fov>1.3962634</horizontal_fov> <!-- 80 degrees -->
+          <horizontal_fov>1.08559388</horizontal_fov> <!-- 62.2 degrees -->
           <image>
             <width>1280</width>
             <height>720</height>
