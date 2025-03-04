@@ -35,7 +35,7 @@ install(TARGETS turtlebot3_drive
   DESTINATION lib/${PROJECT_NAME}
 )
 
-install(DIRECTORY launch models urdf worlds include
+install(DIRECTORY launch models meshs worlds include
   DESTINATION share/${PROJECT_NAME}/
 )
 

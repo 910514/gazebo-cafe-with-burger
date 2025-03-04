@@ -1,57 +1,104 @@
+# Copyright 2019 Open Source Robotics Foundation, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.actions import DeclareLaunchArgument, ExecuteProcess
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 def generate_launch_description():
-    # Get the package directory
-    cafe_env_pkg = get_package_share_directory('cafe_env')
+    # Paths
+    world_path = os.path.join(get_package_share_directory('cafe_env'), 'worlds', 'cafe.world')
+    sdf_path = os.path.join(get_package_share_directory('cafe_env'), 'models', 'turtlebot3_burger', 'model.sdf')
 
-    # Path to your custom world file
-    world_file = os.path.join(cafe_env_pkg, 'worlds', 'cafe.world')
+    # Launch configuration variables with intended defaults (position and orientation)
+    x_pose = LaunchConfiguration('x_pose', default='-0.776521328089704')
+    y_pose = LaunchConfiguration('y_pose', default='-1.5538895640656596')
+    z_pose = LaunchConfiguration('z_pose', default='0.1983192687124241')
+    roll = LaunchConfiguration('roll', default='0.0')      # From quaternion, negligible
+    pitch = LaunchConfiguration('pitch', default='0.0')    # From quaternion, negligible
+    yaw = LaunchConfiguration('yaw', default='1.576')      # Approx 90 degrees from quaternion
 
-    # Launch Gazebo with your custom world
-    gazebo = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(
-                get_package_share_directory('gazebo_ros'),
-                'launch',
-                'gzserver.launch.py'
-            )
-        ),
-        launch_arguments={'world': world_file}.items()
+    # Declare the launch arguments with matching defaults
+    declare_x_position_cmd = DeclareLaunchArgument(
+        'x_pose', default_value='-0.776521328089704',
+        description='X position of the robot in the world'
+    )
+    declare_y_position_cmd = DeclareLaunchArgument(
+        'y_pose', default_value='-1.5538895640656596',
+        description='Y position of the robot in the world'
+    )
+    declare_z_position_cmd = DeclareLaunchArgument(
+        'z_pose', default_value='0.1983192687124241',
+        description='Z position of the robot in the world'
+    )
+    declare_roll_cmd = DeclareLaunchArgument(
+        'roll', default_value='0.0',
+        description='Roll orientation of the robot in radians'
+    )
+    declare_pitch_cmd = DeclareLaunchArgument(
+        'pitch', default_value='0.0',
+        description='Pitch orientation of the robot in radians'
+    )
+    declare_yaw_cmd = DeclareLaunchArgument(
+        'yaw', default_value='1.576',
+        description='Yaw orientation of the robot in radians'
     )
 
-    # Include the robot state publisher launch file
-    robot_state_publisher = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(cafe_env_pkg, 'launch', 'robot_state_publisher.launch.py')
-        )
+    # Start Gazebo server with ROS plugins
+    gazebo_server = ExecuteProcess(
+        cmd=['gzserver', world_path, '--verbose',
+             '-s', 'libgazebo_ros_init.so',
+             '-s', 'libgazebo_ros_factory.so'],
+        output='screen'
     )
 
-    # Include the spawn TurtleBot3 launch file
-    spawn_turtlebot = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(cafe_env_pkg, 'launch', 'spawn_turtlebot3.launch.py')
-        )
+    # Start Gazebo client
+    gazebo_client = ExecuteProcess(
+        cmd=['gzclient', '--verbose'],
+        output='screen'
     )
 
-    # Gazebo client (optional, for visualization)
-    gazebo_client = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(
-                get_package_share_directory('gazebo_ros'),
-                'launch',
-                'gzclient.launch.py'
-            )
-        )
+    # Spawn the TurtleBot3 model with position and orientation
+    spawn_model = Node(
+        package='gazebo_ros',
+        executable='spawn_entity.py',
+        arguments=[
+            '-entity', 'turtlebot3_burger',
+            '-file', sdf_path,
+            '-x', x_pose,
+            '-y', y_pose,
+            '-z', z_pose,
+            '-R', roll,    # Roll in radians
+            '-P', pitch,   # Pitch in radians
+            '-Y', yaw      # Yaw in radians
+        ],
+        output='screen'
     )
 
-    return LaunchDescription([
-        gazebo,
-        gazebo_client,  # Optional: Remove if you don’t need the GUI
-        robot_state_publisher,
-        spawn_turtlebot,
-    ])
+    # Create the launch description
+    ld = LaunchDescription()
+    ld.add_action(declare_x_position_cmd)
+    ld.add_action(declare_y_position_cmd)
+    ld.add_action(declare_z_position_cmd)
+    ld.add_action(declare_roll_cmd)
+    ld.add_action(declare_pitch_cmd)
+    ld.add_action(declare_yaw_cmd)
+    ld.add_action(gazebo_server)
+    ld.add_action(gazebo_client)
+    ld.add_action(spawn_model)
+
+    return ld
