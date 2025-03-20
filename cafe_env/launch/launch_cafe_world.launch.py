@@ -1,7 +1,7 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess
+from launch.actions import DeclareLaunchArgument, ExecuteProcess, SetEnvironmentVariable
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
@@ -79,6 +79,9 @@ def generate_launch_description():
         description='Yaw orientation of the TurtleBot3 robot in radians'
     )
 
+    # Set TURTLEBOT3_MODEL environment variable
+    set_env = SetEnvironmentVariable('TURTLEBOT3_MODEL', 'burger')
+
     # Start Gazebo server
     start_gazebo_server_cmd = ExecuteProcess(
         cmd=['gzserver', world_path, '--verbose', '-s', 'libgazebo_ros_init.so', '-s', 'libgazebo_ros_factory.so'],
@@ -105,7 +108,8 @@ def generate_launch_description():
             '-P', wheeltec_pitch,
             '-Y', wheeltec_yaw
         ],
-        output='screen'
+        output='screen',
+        parameters=[{'use_sim_time': True}]
     )
 
     # Spawn TurtleBot3 robot
@@ -122,11 +126,31 @@ def generate_launch_description():
             '-P', turtlebot_pitch,
             '-Y', turtlebot_yaw
         ],
-        output='screen'
+        output='screen',
+        parameters=[{'use_sim_time': True}]
+    )
+
+    # Static transform publisher for TurtleBot3 imu_link
+    static_transform_imu = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        arguments=['-0.032', '0', '0.068', '0', '0', '0', 'base_link', 'imu_link'],
+        output='screen',
+        parameters=[{'use_sim_time': True}]
+    )
+
+    # Static transform publisher for TurtleBot3 base_scan
+    static_transform_lidar = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        arguments=['-0.032', '0', '0.171', '0', '0', '0', 'base_link', 'base_scan'],
+        output='screen',
+        parameters=[{'use_sim_time': True}]
     )
 
     # Create LaunchDescription
     ld = LaunchDescription()
+    ld.add_action(set_env)
     ld.add_action(declare_wheeltec_x_position_cmd)
     ld.add_action(declare_wheeltec_y_position_cmd)
     ld.add_action(declare_wheeltec_z_position_cmd)
@@ -143,5 +167,7 @@ def generate_launch_description():
     ld.add_action(start_gazebo_client_cmd)
     ld.add_action(start_wheeltec_spawner_cmd)
     ld.add_action(start_turtlebot_spawner_cmd)
+    ld.add_action(static_transform_imu)
+    ld.add_action(static_transform_lidar)
 
     return ld
